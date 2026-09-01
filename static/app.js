@@ -84,6 +84,7 @@ async function scan() {
 function invalidatePending() {
   requestToken += 1;
   scanButton.disabled = false;
+  setStatus("");
 }
 
 scanButton.addEventListener("click", scan);
