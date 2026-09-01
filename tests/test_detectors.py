@@ -25,6 +25,28 @@ def test_detects_each_pii_type(text, expected):
     assert expected in types_in(text)
 
 
+@pytest.mark.parametrize(
+    "address",
+    [
+        "2001:db8::1",
+        "::1",
+        "fe80::1ff:fe23:4567:890a",
+        "::ffff:192.168.1.1",
+        "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+    ],
+)
+def test_detects_compressed_and_mixed_ipv6(address):
+    text = f"peer {address} timed out"
+    finding = next(f for f in scan_text(text).findings if f.type == "IPV6")
+    assert finding.value == address
+    assert text[finding.start : finding.end] == address
+
+
+@pytest.mark.parametrize("value", ["12:34", "gggg::1", "2001:db8:::1", "meeting at 9:30"])
+def test_malformed_ipv6_is_ignored(value):
+    assert "IPV6" not in types_in(value)
+
+
 def test_clean_text_has_no_findings():
     result = scan_text("The quarterly report is ready for review at noon.")
     assert result.has_pii is False

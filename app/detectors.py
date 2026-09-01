@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ipaddress
 import re
 from dataclasses import dataclass, field
 from typing import Callable, List, Optional, Pattern
@@ -75,6 +76,15 @@ def luhn_valid(value: str) -> bool:
     return checksum % 10 == 0
 
 
+def ipv6_valid(value: str) -> bool:
+    """Return True for any textual IPv6 form, including compressed and mixed."""
+    try:
+        ipaddress.IPv6Address(value)
+    except ValueError:
+        return False
+    return True
+
+
 def ssn_valid(value: str) -> bool:
     """Reject SSN-shaped numbers that the SSA never issues."""
     digits = _digits(value)
@@ -130,9 +140,14 @@ DETECTORS: List[Detector] = [
     ),
     Detector(
         name="IPV6",
-        pattern=re.compile(r"\b(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}\b"),
+        pattern=re.compile(
+            r"(?<![0-9A-Za-z:.])(?=[0-9A-Fa-f]*:)"
+            r"[0-9A-Fa-f:]{2,}(?:\.\d{1,3}){0,3}"
+            r"(?![0-9A-Za-z:.])"
+        ),
         confidence="medium",
         description="IPv6 address",
+        validator=ipv6_valid,
     ),
     Detector(
         name="US_PASSPORT",
