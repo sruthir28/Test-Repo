@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PII Detector</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main>
+      <h1>PII Detector</h1>
+      <p class="sub">
+        Paste text below to check it for personally identifiable information.
+        Nothing is stored — scanning happens in memory on the server.
+      </p>
+
+      <textarea
+        id="input"
+        rows="10"
+        placeholder="Paste text here, e.g. Contact Jane at jane.doe@example.com or 415-555-0199."
+      ></textarea>
+
+      <div class="actions">
+        <button id="scan">Scan for PII</button>
+        <button id="sample" class="secondary">Load sample</button>
+        <button id="clear" class="secondary">Clear</button>
+      </div>
+
+      <div id="status" class="status" hidden></div>
+      <section id="results" hidden>
+        <div id="verdict" class="verdict"></div>
+        <table id="findings">
+          <thead>
+            <tr><th>Type</th><th>Value</th><th>Position</th><th>Confidence</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <h2>Redacted text</h2>
+        <pre id="redacted"></pre>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
